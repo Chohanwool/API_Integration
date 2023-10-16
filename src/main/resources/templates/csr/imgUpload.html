@@ -19,14 +19,18 @@
 
     function uploadFile(file) {
         let formData = new FormData();
+        formData.append("type", "csr");
+        formData.append("menuCd", "csr");
         formData.append("file", file);
 
         $.ajax({
-            url: '/file/uploadFile',
+            url: '/file/uploadFile.do',
             data: formData,
             type: 'POST',
+            contentType: false,
+            processData: false,
             success: function (res){
-
+                console.log(res);
             },
             error: function () {
 

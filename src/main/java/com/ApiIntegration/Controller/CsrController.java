@@ -9,7 +9,6 @@ public class CsrController {
 
     @RequestMapping("/main")
     public String csrMain(){
-        System.out.println("asd");
         return "/csr/main";
     }
 
