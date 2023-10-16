@@ -50,6 +50,11 @@ public class FileUploadUtil {
         allowedExts = allowedExts.toLowerCase();
         String idxFileName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
 
+        if(idxFileName.equals("blob")){
+            byte[] audioData = file.getBytes();
+            idxFileName = "aduio.wav";
+        }
+
         if (allowedExts.indexOf(idxFileName.toLowerCase()) == -1 && !allowedExts.equals("all")) {
             throw new CommonException("사용할 수 없는 확장자입니다.");
         }
@@ -64,7 +69,7 @@ public class FileUploadUtil {
         }
 
         String sourceFileName = FilenameUtils.getName(file.getOriginalFilename());
-        String sourceFileNameExt = FilenameUtils.getExtension(sourceFileName).toLowerCase();
+        String sourceFileNameExt = FilenameUtils.getExtension(idxFileName).toLowerCase();
         String destinationFileName = StringUtils.defaultIfEmpty(fileName, DateFormatUtils.format(new Date(), "yyyyMMddHHmmss") + "_" + RandomStringUtils.randomAlphanumeric(6)) + "."
                 + sourceFileNameExt;
 

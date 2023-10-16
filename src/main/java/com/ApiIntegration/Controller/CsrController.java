@@ -16,4 +16,7 @@ public class CsrController {
     public String imgUpload(){
         return "/csr/imgUpload";
     }
+
+    @RequestMapping("/voiceUpload")
+    public String voiceUpload(){return "/csr/voiceUpload";}
 }

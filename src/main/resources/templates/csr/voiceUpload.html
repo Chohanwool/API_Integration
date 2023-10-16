@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 업로드</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>음성 녹음 및 전송</h1>
+    <button id="startRecording">녹음 시작</button>
+    <button id="stopRecording" disabled>녹음 중지</button>
+    <audio controls id="audioPlayer" style="display: none;"></audio>
+
+
+
+</body>
+
+<script>
+    const startButton = document.getElementById('startRecording');
+    const stopButton = document.getElementById('stopRecording');
+    const audioPlayer = document.getElementById('audioPlayer');
+    let mediaRecorder;
+    let audioChunks = [];
+
+    startButton.addEventListener('click', startRecording);
+    stopButton.addEventListener('click', stopRecording);
+
+    async function startRecording() {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioPlayer.src = audioUrl;
+            audioPlayer.style.display = 'block';
+
+            // 전송을 위한 XMLHttpRequest 또는 fetch를 사용하여 백엔드로 음성 파일을 업로드
+            // 여기서는 fetch를 사용하겠습니다.
+            const formData = new FormData();
+            formData.append('file', audioBlob);
+            formData.append('type', 'csr');
+            formData.append('menuCd', 'csr');
+
+            fetch('/file/voiceUpload.do', {
+                method: 'POST',
+                body: formData,
+            }).then(response => {
+                if (response.ok) {
+                    console.log('음성 파일 업로드 성공');
+                } else {
+                    console.error('음성 파일 업로드 실패');
+                }
+            });
+        };
+
+        mediaRecorder.start();
+        startButton.disabled = true;
+        stopButton.disabled = false;
+    }
+
+    function stopRecording() {
+        mediaRecorder.stop();
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    }
+
+</script>
+
+</html>

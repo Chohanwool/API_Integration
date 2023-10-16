@@ -33,7 +33,24 @@ public class FileUploadService {
         }
 
         String allowedExts = "all";
-        String fileName = fileVo.getFile().getName();
+        String fileName = fileVo.getFile().getName() + RandomStringUtils.randomAlphanumeric(10);
+        String filePath = "/"+ fileVo.getFilePath() + "/";
+
+        return fileUploadUtil.uploadFile(fileVo.getFile(), fileName, filePath, allowedExts);
+    }
+
+    public Map<String, String> uploadVoice(FileUploadNewVo fileVo) throws Exception {
+        if(StringUtils.isEmpty(fileVo.getFilePath())){
+            String menuCd = fileVo.getMenuCd();
+            if(StringUtils.isEmpty(menuCd)){
+                throw new CommonException("파일 업로드 경로를 지정해주세요.");
+            }
+
+            fileVo.setFilePath(menuCd);
+        }
+
+        String allowedExts = "all";
+        String fileName = fileVo.getFile().getName() + RandomStringUtils.randomAlphanumeric(10);
         String filePath = "/"+ fileVo.getFilePath() + "/";
 
         return fileUploadUtil.uploadFile(fileVo.getFile(), fileName, filePath, allowedExts);
